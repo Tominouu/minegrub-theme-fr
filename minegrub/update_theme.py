@@ -128,20 +128,20 @@ def get_args() -> (str, str):
         return sys.argv[1], sys.argv[2]
 
 def update_background(background_file = "") -> None:
-    if background_file == "":   # no background given, chose randomly
-        list_background_files = [f for f in os.listdir(f"{themedir}/backgrounds/") if f[0] != '.'] # ignore hidden files
+    if background_file == "":   # pas de background donné, choisir au hasard
+        list_background_files = [f for f in os.listdir(f"{themedir}/backgrounds/") if f[0] != '.'] # ignore les fichiers cachés
         if len(list_background_files) == 0:
-            print("No background files available to choose from, background will remain unchanged.", file=sys.stderr)
-            return  # do nothing if there is no file to use
+            print("Aucun fichier d'arrière-plan disponible pour le choix, l'arrière-plan restera inchangé.", file=sys.stderr)
+            return  # ne rien faire
         background_file = f"{themedir}/backgrounds/{random.choice(list_background_files)}"
     elif not os.path.isfile(background_file):   # background given, check if file exists
-        print(f"ERROR: The file {background_file} does not exist.", file=sys.stderr)
+        print(f"ERREUR : Le fichier {background_file} n'existe pas.", file=sys.stderr)
         quit(1)
     shutil.copyfile(background_file, f"{themedir}/background.png")
-    print(f"Using background '{background_file}'.")
+    print(f"Utilisation de l'arrière-plan '{background_file}'.")
 
 if __name__ == "__main__":
-    # Annoying dir path things
+    # prépare les dossiers
     themedir = dirname(abspath(__file__))
     if not os.path.isdir(f"{themedir}/cache"):
         os.mkdir(f"{themedir}/cache")
