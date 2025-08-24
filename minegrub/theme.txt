@@ -3,7 +3,7 @@
 title-text: ""
 desktop-image: "background.png"
 
-# Terminal for Console and Options
+# Terminal pour la console et les options
 terminal-border: "20"
 terminal-left: "10%"
 terminal-top: "10%+23"
@@ -12,12 +12,12 @@ terminal-height: "80%"
 terminal-box: "term_*.png"
 terminal-font: "Monocraft Regular 22"
 
-# Text White 
+# Texte Blanc
 + boot_menu {
-	# as we don't have any pixmaps here, it gets aligned strangely
-	# top pixmap is 17px in height 
-	# left pixmap is 6px in width 
-	# the text needs to be 3 pixels above and 3 pixels to the left
+	# Comme nous n'avons pas de pixmaps ici, l'alignement est étrange.
+	# Le pixmap du haut mesure 17 px de haut.
+	# Le pixmap de gauche mesure 6 px de large.
+	# Le texte doit être placé 3 pixels au-dessus et 3 pixels à gauche.
 	left = 50%-297 
 	top = 40%+14
 	width = 600
