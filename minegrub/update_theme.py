@@ -12,12 +12,12 @@ from PIL import Image, ImageDraw, ImageFont
 import hashlib
 
 def update_splash(slogan: str) -> None:
-    # Choose random splash text
-    if slogan: # I just want it
+    # Choisit un slogan au hasard dans la liste
+    if slogan: # Si un slogan est donné en argument, on l'utilise
         splash_text = slogan
     else:
         splash_text = random.choice(text_options)
-        # Use cached image if it exists
+        # Utilise l'image mise en cache si elle existe
         splash_file = cache_file_name(splash_text)
         if os.path.isfile(splash_file):
             return use_logo(splash_text, splash_file)
@@ -25,10 +25,10 @@ def update_splash(slogan: str) -> None:
     logo_img = Image.open(f"{assetdir}/logo_clear.png")
     original_size = logo_img.size
     txt_img = Image.new(mode="RGBA", size=original_size, color=(0, 0, 0, 0))
-    # Rotate image before drawing text
+    # Retourne l'image pour que le texte soit droit
     txt_img = txt_img.rotate(360 - angle, expand=True)
     d = ImageDraw.Draw(txt_img)
-    # Draw text and shadow
+    # Dessine le texte et l'ombre
     if text_shadow:
         d.text(
             (
@@ -38,9 +38,9 @@ def update_splash(slogan: str) -> None:
             splash_text, fill=shadow_color, anchor="ms", font=font,
         )
     d.text(text_coords, splash_text, fill=text_color, anchor="ms", font=font)
-    # Rotate image back to original angle
+    # Retourne l'image à son angle d'origine
     txt_img = txt_img.rotate(angle, expand=True)
-    # Mathy stuff (crop image back to original size)
+    # Maths pour centrer l'image du texte sur l'image du logo
     coordinates = (
         (txt_img.size[0] - original_size[0]) / 2,
         (txt_img.size[1] - original_size[1]) / 2,
@@ -48,9 +48,9 @@ def update_splash(slogan: str) -> None:
         (txt_img.size[1] + original_size[1]) / 2,
     )
     new = Image.alpha_composite(logo_img, txt_img.crop(coordinates))
-    # no cache here if you want what you like
+    # pas de cache ici si vous voulez ce que vous aimez
     if slogan:
-        print(f"Using splash from CLI: '{splash_text}'.")
+        print(f"Utilisation du slogan depuis la ligne de commande : '{splash_text}'.")
         new.save(f"{themedir}/logo.png")
     else:
         new.save(splash_file)
@@ -66,12 +66,12 @@ def cache_file_name(splash_text: str) -> str:
     return f"{cachedir}/{h.hexdigest()}.png"
 
 def get_output(command):
-    # Run the command and get its output
+    # lance la commande et capture la sortie
     result = subprocess.run(command, stdout=subprocess.PIPE)
     return result.stdout.decode()
 
 def update_package_count() -> None:
-    # Run Fastfetch and Neofetch in order
+    # Exécute Fastfetch et Neofetch dans l'ordre
     for command in [["fastfetch", "-c", "neofetch"], ["neofetch"]]:
         try:
             output = get_output(command)
@@ -79,21 +79,21 @@ def update_package_count() -> None:
         except FileNotFoundError:
             continue
     else:
-        print("Error: Neither Fastfetch or Neofetch are available. Package count not updated.")
+        print("Erreur : ni fastfetch ni neofetch n'ont été trouvés, le nombre de paquets installés ne peut pas être mis à jour.", file=sys.stderr)
         return
 
-    # Extract the number of packages from the output
+    # Extrait le nombre de paquets installés de la sortie
     packages_line = next(line for line in output.split('\n') if 'Packages' in line)
     _, num_packages_str = packages_line.split(':')
-    # Split the string into parts based on spaces
+    # divise la chaîne en parties en fonction des espaces
     num_packages_parts = num_packages_str.split()
 
-    # Initialize total packages count
+    # Initialise le compteur de paquets
     total_packages = 0
 
-    # Iterate over the parts and add up the numbers
+    # Itère sur les parties et additionne les nombres
     for part in num_packages_parts:
-        # Check if the part is a number
+        # Vérifie si la partie est un nombre
         if part.isdigit():
             total_packages += int(part)
 
@@ -102,12 +102,12 @@ def update_package_count() -> None:
     old_lines = path.read_text().splitlines(keepends=False)
     new_line = f'\ttext = "{total_packages} {text}"'
 
-    # Replace lines that have {text} to {new_line}
+    # Remplace {text} par {new_line}
     for i, old_line in enumerate(old_lines):
         if text in old_line:
             patch(path, i, new_line)
 
-    print(f"Updated packages installed to {total_packages}.")
+    print(f"Met à jour le nombre de paquets installés à {total_packages}.")
 
 def patch(path: Path, linenum: int, new_line: str) -> None:
     lines = path.read_bytes().splitlines(keepends=True)
@@ -124,7 +124,7 @@ def get_args() -> (str, str):
     elif argv_len == 3:
         return sys.argv[1], sys.argv[2]
     else:
-        print(f"WARNING: expected at most 2 arguments, but got {len(sys.argv)}.", file=sys.stderr)
+        print(f"ATTENTION : attendu au plus 2 arguments, mais obtenu {len(sys.argv)}.", file=sys.stderr)
         return sys.argv[1], sys.argv[2]
 
 def update_background(background_file = "") -> None:
